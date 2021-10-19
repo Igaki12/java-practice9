@@ -24,6 +24,7 @@ public class Main {
 			
 			while ((line = br.readLine()) != null) {
 				data = line.split(",");
+				readingLine += 1;
 				
 
 				Calendar calData = caliculator.ParseStrToCalendar(data[2]);
@@ -59,7 +60,7 @@ public class Main {
 					caliculator.PrintInFile(data[0] + "," + data[1] + "," + "20日");
 					continue;
 				}
-				readingLine += 1;
+				
 				System.out.println(readingLine + "行のデータに異常があります");
 		
 				
