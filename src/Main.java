@@ -24,7 +24,7 @@ public class Main {
 			Calendar calDesignatedDay = caliculator.ParseStrToCalendar(strDesignatedDay);
 			int t = calDesignatedDay.get(Calendar.MONTH);
 			t += 2;
-			for (int i = 0;i <23; i++) {
+			for (int i = 0;i <　23; i++) {
 				caliculator.PrintFile("," + t + "月");
 				t += 1;
 				if (t > 12) {
@@ -93,7 +93,8 @@ public class Main {
 							calDesignatedDay.add(Calendar.MONTH, 1);
 						}
 						if (times > 23) {
-							System.out.println("ERROR:times > 23");
+							times = 23;
+//							指定した日より先にある有給取得データは右端に、指定した日より2年以上前にある有給取得データは左端に表示される。
 						}
 						sequence2[times] += 1;
 						
