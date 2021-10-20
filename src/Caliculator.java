@@ -33,4 +33,14 @@ public void PrintInFile(String text) {
 		ex.printStackTrace();
 	}
 }
+public void PrintFile(String text) {
+	try {
+		FileWriter fw = new FileWriter("src/holiday.csv",true);
+		PrintWriter pw = new PrintWriter(fw);
+		pw.print(text);
+		pw.close();
+	}catch (IOException ex) {
+		ex.printStackTrace();
+	}
+}
 }
