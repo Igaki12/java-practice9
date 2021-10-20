@@ -84,7 +84,6 @@ public class Main {
 					if (data2[0].equals(data[0])) {
 						Calendar calData2 = caliculator.ParseStrToCalendar(data2[2]);
 						calDesignatedDay = caliculator.ParseStrToCalendar(strDesignatedDay);
-						System.out.println(calDesignatedDay.get(Calendar.YEAR) +"/" + calDesignatedDay.get(Calendar.MONTH));
 						calDesignatedDay.add(Calendar.MONTH,-24);
 						
 						int times = 0;
