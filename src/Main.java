@@ -18,10 +18,15 @@ public class Main {
 			String line;
 			String[] data;
 			line = br.readLine();
-			caliculator.PrintInFile("2019.11," + "~" + "2021.11");
-			caliculator.PrintFile("No," + "従業員名," + "有給取得可能数");
+
 			
 			Calendar calDesignatedDay = caliculator.ParseStrToCalendar(strDesignatedDay);
+			int y = calDesignatedDay.get(Calendar.YEAR) - 2;
+			int M = calDesignatedDay.get(Calendar.MONTH) + 2;
+			caliculator.PrintFile(y + "." + M + ",~,") ;
+			caliculator.PrintInFile("基準日:" + strDesignatedDay);
+			caliculator.PrintFile("No," + "従業員名," + "有給取得可能数");
+			
 			int t = calDesignatedDay.get(Calendar.MONTH);
 			t += 2;
 			for (int i = 0;i < 23; i++) {
