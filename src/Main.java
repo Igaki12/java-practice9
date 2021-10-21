@@ -23,12 +23,14 @@ public class Main {
 			Calendar calDesignatedDay = caliculator.ParseStrToCalendar(strDesignatedDay);
 			int y = calDesignatedDay.get(Calendar.YEAR) - 2;
 			int M = calDesignatedDay.get(Calendar.MONTH) + 2;
+			if (M > 12) {
+				M = 1;
+			}
 			caliculator.PrintFile(y + "." + M + ",~,") ;
 			caliculator.PrintInFile("Šî€“ú:" + strDesignatedDay);
 			caliculator.PrintFile("No," + "]‹Æˆõ–¼," + "—L‹‹Žæ“¾‰Â”\”");
 			
-			int t = calDesignatedDay.get(Calendar.MONTH);
-			t += 2;
+			int t = calDesignatedDay.get(Calendar.MONTH) + 2;
 			if (t >12) {
 				t = 1;
 			}
