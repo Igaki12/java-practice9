@@ -29,6 +29,9 @@ public class Main {
 			
 			int t = calDesignatedDay.get(Calendar.MONTH);
 			t += 2;
+			if (t >12) {
+				t = 1;
+			}
 			for (int i = 0;i < 23; i++) {
 				caliculator.PrintFile("," + t + "ŒŽ");
 				t += 1;
