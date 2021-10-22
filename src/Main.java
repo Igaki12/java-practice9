@@ -17,6 +17,7 @@ public class Main {
 			
 			String line;
 			String[] data;
+			
 			line = br.readLine();
 
 			
@@ -31,7 +32,7 @@ public class Main {
 			caliculator.PrintFile("No," + "従業員名," + "有給取得可能数");
 			
 			int t = calDesignatedDay.get(Calendar.MONTH) + 2;
-			if (t >12) {
+			if (t > 12) {
 				t = 1;
 			}
 			for (int i = 0;i < 23; i++) {
@@ -46,77 +47,117 @@ public class Main {
 			while ((line = br.readLine()) != null) {
 				data = line.split(",");
 				
-
+				int[] sequence = new int[24];
 				Calendar calData = caliculator.ParseStrToCalendar(data[2]);
 				
 				int number_holiday = 0;
 				calData.add(Calendar.MONTH, 6);
-				number_holiday = 10;
-				
 				if (calData.compareTo(calDesignatedDay) < 0) {
+					number_holiday += 10;
 					calData.add(Calendar.YEAR, 1);
-					number_holiday = 11;
+				}
+				if (calData.compareTo(calDesignatedDay) < 0) {
+					number_holiday += 11;
+					calData.add(Calendar.YEAR, 1);
 				
 				}if (calData.compareTo(calDesignatedDay) < 0) {
+					number_holiday += 12 - 10;
 					calData.add(Calendar.YEAR, 1);
-					number_holiday = 12;
 				
 				}if (calData.compareTo(calDesignatedDay) < 0) {
+					number_holiday += 14 - 11;
 					calData.add(Calendar.YEAR, 1);
-					number_holiday = 14;
 				
 				}if (calData.compareTo(calDesignatedDay) < 0) {
+					number_holiday += 16 - 12;
 					calData.add(Calendar.YEAR, 1);
-					number_holiday = 16;
 				
 				}if (calData.compareTo(calDesignatedDay) < 0) {
+					number_holiday += 18 - 14;
 					calData.add(Calendar.YEAR, 1);
-					number_holiday = 18;
 				
 				}if (calData.compareTo(calDesignatedDay) < 0) {
-				
-					number_holiday = 20;
-				
+					number_holiday += 20 - 16;
+					calData.add(Calendar.YEAR, 1);
+					
+				}if (calData.compareTo(calDesignatedDay) < 0) {
+					number_holiday += 20 - 18;
+					calData.add(Calendar.YEAR, 1);
 				}
 				
 				
-//				ここから有給取得日グラフの作成
-				BufferedReader br2 = null;
-				File file2 = new File("src/took_holiday.csv");
-				br2  = new BufferedReader(new FileReader(file2));
-				String line2;
-				String[] data2;
-				int[] sequence2 = new int[24];
+//				ここから有給取得日グラフ(th)の作成
+				BufferedReader br_th = null;
+				File th = new File("src/took_holiday.csv");
+				br_th  = new BufferedReader(new FileReader(th));
+				String line_th;
+				String[] data_th;
 				
-				line2 = br2.readLine(); 
-				while ((line2 = br2.readLine()) != null){
-					data2 = line2.split(",");
-					if (data2[0].equals(data[0])) {
-						Calendar calData2 = caliculator.ParseStrToCalendar(data2[2]);
-						calDesignatedDay = caliculator.ParseStrToCalendar(strDesignatedDay);
-						calDesignatedDay.add(Calendar.MONTH,-24);
+				
+				line_th = br_th.readLine(); 
+				while ((line_th = br_th.readLine()) != null){
+					data_th = line_th.split(",");
+					if (data_th[0].equals(data[0])) {
+						Calendar calData_th = caliculator.ParseStrToCalendar(data_th[2]);
+						Calendar calDesignatedDay2 = caliculator.ParseStrToCalendar(strDesignatedDay);
+						calDesignatedDay2.add(Calendar.MONTH,-24);
 						
 						int times = 0;
-						calDesignatedDay.add(Calendar.MONTH, 1);
-						while (calDesignatedDay.compareTo(calData2) < 0) {
+						calDesignatedDay2.add(Calendar.MONTH, 1);
+						while (calDesignatedDay2.compareTo(calData_th) < 0) {
 							times += 1;
-							calDesignatedDay.add(Calendar.MONTH, 1);
+							calDesignatedDay2.add(Calendar.MONTH, 1);
 						}
 						if (times > 23) {
 							times = 23;
-//							指定した日より先にある有給取得データは右端に、指定した日より2年以上前にある有給取得データは左端に表示される。
+//							指定した日より先にある有給取得データは右端に、指定した日より2年以上前にある有給取得データは左端に負の数で表示される。
 						}
-						sequence2[times] += 1;
-						
+						sequence[times] -= 1;	
+					}
+				}
+//				有給取得可能数更新が入る月には新たに取得した数を正の数で表示するようにする			
+				Calendar calDesignatedDay3 = caliculator.ParseStrToCalendar(strDesignatedDay);
+				calDesignatedDay3.add(Calendar.MONTH, -24);
+				
+				for (int times = 0; times < 24 ;times++) {
+					calDesignatedDay3.add(Calendar.MONTH, 1);
+					Calendar calData2 = caliculator.ParseStrToCalendar(data[2]);
+					calData2.add(Calendar.MONTH, 6);
+					
+					if(calData2.get(Calendar.MONTH) == calDesignatedDay3.get(Calendar.MONTH) && calData2.compareTo(calDesignatedDay3) < 0 ) {
+						sequence[times] += 10;
+						calData2.add(Calendar.YEAR, 1);
+//						有給取得可能数増加分（10~20日）の決定->正の数で表現
+						if (calData2.compareTo(calDesignatedDay3) < 0) {
+							sequence[times] += 1;
+							calData2.add(Calendar.YEAR, 1);	
+						}if (calData2.compareTo(calDesignatedDay3) < 0) {
+							sequence[times] += 1;
+							calData2.add(Calendar.YEAR, 1);
+						}if (calData2.compareTo(calDesignatedDay3) < 0) {
+							sequence[times] += 2;
+							calData2.add(Calendar.YEAR, 1);
+						}if (calData2.compareTo(calDesignatedDay3) < 0) {
+							sequence[times] += 2;
+							calData2.add(Calendar.YEAR, 1);
+						}if (calData2.compareTo(calDesignatedDay3) < 0) {
+							sequence[times] += 2;
+							calData2.add(Calendar.YEAR, 1);
+						}if (calData2.compareTo(calDesignatedDay3) < 0) {
+							sequence[times] += 2;
+						}
 					}
 				}
 				
+				
+				
+//				ファイルへの最終出力
 				caliculator.PrintFile(data[0] + "," + data[1] + "," + number_holiday +  "日");
 				for (int i = 0; i < 23; i++) {
-					caliculator.PrintFile("," + sequence2[i]);
+					caliculator.PrintFile("," + sequence[i]);
 				}
-				caliculator.PrintInFile("," + sequence2[23]);
-				br2.close();
+				caliculator.PrintInFile("," + sequence[23]);
+				br_th.close();
 				
 				
 			}
