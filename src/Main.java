@@ -3,24 +3,14 @@ import java.util.Calendar;
 public class Main {
 
 	public static void main(String[] args) {
-	    BufferedReader br = null;
-		String file_name = "src/data.csv";
 		Caliculator caliculator = new Caliculator();
+		BufferedReader br = null;
 		
 //		有給取得基準日を入力(yyyy/MM/dd)
 		String strDesignatedDay = "2021/10/31";
 		
 		
 		try {
-			File file = new File(file_name);
-			br = new BufferedReader(new FileReader(file));
-			
-			String line;
-			String[] data;
-			
-			line = br.readLine();
-
-			
 			Calendar calDesignatedDay = caliculator.ParseStrToCalendar(strDesignatedDay);
 			int y = calDesignatedDay.get(Calendar.YEAR) - 2;
 			int M = calDesignatedDay.get(Calendar.MONTH) + 2;
@@ -30,133 +20,123 @@ public class Main {
 			caliculator.PrintFile(y + "." + M + ",~,") ;
 			caliculator.PrintInFile("基準日:" + strDesignatedDay);
 			caliculator.PrintFile("No," + "従業員名," + "有給取得可能数");
-			
-			int t = calDesignatedDay.get(Calendar.MONTH) + 2;
-			if (t > 12) {
-				t = 1;
-			}
-			for (int i = 0;i < 23; i++) {
-				caliculator.PrintFile("," + t + "月");
-				t += 1;
-				if (t > 12) {
-					t = 1;
+			for ( int i = 0; i < 23; i++ ) {
+				if (i % 12 == 0) {
+					caliculator.PrintFile(",有給更新月");
+				}else {
+					caliculator.PrintFile("," + (i%12) + "ケ月目");
 				}
 			}
-			caliculator.PrintInFile("," + t + "月");
+			caliculator.PrintInFile(",11ケ月目");
 			
+			
+		    
+			String file_name = "src/data.csv";
+			File file = new File(file_name);
+			br = new BufferedReader(new FileReader(file));
+			
+			String line;
+			String[] data;
+			
+			line = br.readLine();
 			while ((line = br.readLine()) != null) {
 				data = line.split(",");
 				
-				int[] sequence = new int[24];
+
 				Calendar calData = caliculator.ParseStrToCalendar(data[2]);
 				
-				int number_holiday = 0;
+				int numHoliday = 0;
 				calData.add(Calendar.MONTH, 6);
 				if (calData.compareTo(calDesignatedDay) < 0) {
-					number_holiday += 10;
+					numHoliday += 10;
 					calData.add(Calendar.YEAR, 1);
 				}
 				if (calData.compareTo(calDesignatedDay) < 0) {
-					number_holiday += 11;
+					numHoliday += 11;
 					calData.add(Calendar.YEAR, 1);
 				
 				}if (calData.compareTo(calDesignatedDay) < 0) {
-					number_holiday += 12 - 10;
+					numHoliday += 12 - 10;
 					calData.add(Calendar.YEAR, 1);
 				
 				}if (calData.compareTo(calDesignatedDay) < 0) {
-					number_holiday += 14 - 11;
+					numHoliday += 14 - 11;
 					calData.add(Calendar.YEAR, 1);
 				
 				}if (calData.compareTo(calDesignatedDay) < 0) {
-					number_holiday += 16 - 12;
+					numHoliday += 16 - 12;
 					calData.add(Calendar.YEAR, 1);
 				
 				}if (calData.compareTo(calDesignatedDay) < 0) {
-					number_holiday += 18 - 14;
+					numHoliday += 18 - 14;
 					calData.add(Calendar.YEAR, 1);
 				
 				}if (calData.compareTo(calDesignatedDay) < 0) {
-					number_holiday += 20 - 16;
+					numHoliday += 20 - 16;
 					calData.add(Calendar.YEAR, 1);
 					
 				}if (calData.compareTo(calDesignatedDay) < 0) {
-					number_holiday += 20 - 18;
+					numHoliday += 20 - 18;
 					calData.add(Calendar.YEAR, 1);
 				}
 				
 				
 //				ここから有給取得日グラフ(th)の作成
+	    		Calendar daysAfterUpdate = caliculator.ParseStrToCalendar(data[2]);
+    			Calendar calDesignatedDay2 = caliculator.ParseStrToCalendar(strDesignatedDay);	
+				daysAfterUpdate.add(Calendar.MONTH, 6);
+				int years = 0;
+				while (daysAfterUpdate.compareTo(calDesignatedDay2) < 0) {
+					years += 1;
+					daysAfterUpdate.add(Calendar.YEAR, 1);
+				}
+//				グラフ左端の月日
+				daysAfterUpdate.add(Calendar.YEAR, -2);
+				String strDaysAfterUpdate = daysAfterUpdate.get(Calendar.YEAR) + "/" + daysAfterUpdate.get(Calendar.MONTH) + "/" + daysAfterUpdate.get(Calendar.DAY_OF_MONTH);
+			
+				int index = 1;
+				daysAfterUpdate.add(Calendar.MONTH, 1);
+				while (daysAfterUpdate.compareTo(calDesignatedDay2) < 0) {
+					index += 1;
+					daysAfterUpdate.add(Calendar.MONTH, 1);
+				}
+				int[] sequence = new int[index];
+				
+
 				BufferedReader br_th = null;
 				File th = new File("src/took_holiday.csv");
 				br_th  = new BufferedReader(new FileReader(th));
 				String line_th;
 				String[] data_th;
-				
-				
 				line_th = br_th.readLine(); 
 				while ((line_th = br_th.readLine()) != null){
 					data_th = line_th.split(",");
+					Calendar daysAfterUpdate2 = caliculator.ParseStrToCalendar(strDaysAfterUpdate);
+
 					if (data_th[0].equals(data[0])) {
 						Calendar calData_th = caliculator.ParseStrToCalendar(data_th[2]);
-						Calendar calDesignatedDay2 = caliculator.ParseStrToCalendar(strDesignatedDay);
-						calDesignatedDay2.add(Calendar.MONTH,-24);
 						
 						int times = 0;
-						calDesignatedDay2.add(Calendar.MONTH, 1);
-						while (calDesignatedDay2.compareTo(calData_th) < 0) {
+						daysAfterUpdate2.add(Calendar.MONTH, 1);
+						while (daysAfterUpdate2.compareTo(calData_th) < 0) {
 							times += 1;
-							calDesignatedDay2.add(Calendar.MONTH, 1);
+							daysAfterUpdate2.add(Calendar.MONTH, 1);
 						}
-						if (times > 23) {
-							times = 23;
-//							指定した日より先にある有給取得データは右端に、指定した日より2年以上前にある有給取得データは左端に負の数で表示される。
+						if (times > index) {
+							System.out.println("指定した日より先の有給取得データがあります");
+							times = index;
+//							指定した日より先にある有給取得データは右端に、最終更新日より1年以上前にある有給取得データは左端に表示される。
 						}
-						sequence[times] -= 1;	
+						sequence[times] += 1;	
 					}
 				}
-//				有給取得可能数更新が入る月には新たに取得した数を正の数で表示するようにする			
-				Calendar calDesignatedDay3 = caliculator.ParseStrToCalendar(strDesignatedDay);
-				calDesignatedDay3.add(Calendar.MONTH, -24);
-				
-				for (int times = 0; times < 24 ;times++) {
-					calDesignatedDay3.add(Calendar.MONTH, 1);
-					Calendar calData2 = caliculator.ParseStrToCalendar(data[2]);
-					calData2.add(Calendar.MONTH, 6);
-					
-					if(calData2.get(Calendar.MONTH) == calDesignatedDay3.get(Calendar.MONTH) && calData2.compareTo(calDesignatedDay3) < 0 ) {
-						sequence[times] += 10;
-						calData2.add(Calendar.YEAR, 1);
-//						有給取得可能数増加分（10~20日）の決定->正の数で表現
-						if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 11 - 10;
-							calData2.add(Calendar.YEAR, 1);	
-						}if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 12 - 11;
-							calData2.add(Calendar.YEAR, 1);
-						}if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 14 - 12;
-							calData2.add(Calendar.YEAR, 1);
-						}if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 16 - 14;
-							calData2.add(Calendar.YEAR, 1);
-						}if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 18 - 16;
-							calData2.add(Calendar.YEAR, 1);
-						}if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 20 - 18;
-						}
-					}
-				}
-				
-				
 				
 //				ファイルへの最終出力
-				caliculator.PrintFile(data[0] + "," + data[1] + "," + number_holiday +  "日");
-				for (int i = 0; i < 23; i++) {
+				caliculator.PrintFile(data[0] + "," + data[1] + "," + numHoliday +  "日");
+				for (int i = 0; i < (index-1); i++) {
 					caliculator.PrintFile("," + sequence[i]);
 				}
-				caliculator.PrintInFile("," + sequence[23]);
+				caliculator.PrintInFile("," + sequence[index-1]);
 				br_th.close();
 				
 				
