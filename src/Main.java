@@ -91,7 +91,13 @@ public class Main {
 					daysAfterUpdate.add(Calendar.YEAR, 1);
 				}
 //				ƒOƒ‰ƒt¶’[‚ÌŒ“ú
-				daysAfterUpdate.add(Calendar.YEAR, -2);
+				if (years < 2) {
+					daysAfterUpdate.add(Calendar.YEAR, -years);
+				}
+				else {
+					daysAfterUpdate.add(Calendar.YEAR, -2);
+				}
+					
 				String strDaysAfterUpdate = daysAfterUpdate.get(Calendar.YEAR) + "/" + daysAfterUpdate.get(Calendar.MONTH) + "/" + daysAfterUpdate.get(Calendar.DAY_OF_MONTH);
 			
 				int index = 1;
