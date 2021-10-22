@@ -129,22 +129,22 @@ public class Main {
 						calData2.add(Calendar.YEAR, 1);
 //						有給取得可能数増加分（10~20日）の決定->正の数で表現
 						if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 1;
+							sequence[times] += 11 - 10;
 							calData2.add(Calendar.YEAR, 1);	
 						}if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 1;
+							sequence[times] += 12 - 11;
 							calData2.add(Calendar.YEAR, 1);
 						}if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 2;
+							sequence[times] += 14 - 12;
 							calData2.add(Calendar.YEAR, 1);
 						}if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 2;
+							sequence[times] += 16 - 14;
 							calData2.add(Calendar.YEAR, 1);
 						}if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 2;
+							sequence[times] += 18 - 16;
 							calData2.add(Calendar.YEAR, 1);
 						}if (calData2.compareTo(calDesignatedDay3) < 0) {
-							sequence[times] += 2;
+							sequence[times] += 20 - 18;
 						}
 					}
 				}
