@@ -5,6 +5,7 @@ public class Main {
 	public static void main(String[] args) {
 		Caliculator caliculator = new Caliculator();
 		BufferedReader br = null;
+		BufferedReader br_th = null;
 		
 //		有給取得基準日を入力(yyyy/MM/dd)
 		String strDesignatedDay = "2021/10/31";
@@ -82,34 +83,38 @@ public class Main {
 				
 				
 //				ここから有給取得日グラフ(th)の作成
-	    		Calendar daysAfterUpdate = caliculator.ParseStrToCalendar(data[2]);
+	    		Calendar calLastUpdateDay = caliculator.ParseStrToCalendar(data[2]);
     			Calendar calDesignatedDay2 = caliculator.ParseStrToCalendar(strDesignatedDay);	
-				daysAfterUpdate.add(Calendar.MONTH, 6);
+				calLastUpdateDay.add(Calendar.MONTH, 6);
 				int years = 0;
-				while (daysAfterUpdate.compareTo(calDesignatedDay2) < 0) {
+				while (calLastUpdateDay.compareTo(calDesignatedDay2) < 0) {
 					years += 1;
-					daysAfterUpdate.add(Calendar.YEAR, 1);
+					calLastUpdateDay.add(Calendar.YEAR, 1);
 				}
 //				グラフ左端の月日
 				if (years < 2) {
-					daysAfterUpdate.add(Calendar.YEAR, -years);
+					calLastUpdateDay.add(Calendar.YEAR, -years);
 				}
 				else {
-					daysAfterUpdate.add(Calendar.YEAR, -2);
+					calLastUpdateDay.add(Calendar.YEAR, -2);
 				}
 					
-				String strDaysAfterUpdate = daysAfterUpdate.get(Calendar.YEAR) + "/" + daysAfterUpdate.get(Calendar.MONTH) + "/" + daysAfterUpdate.get(Calendar.DAY_OF_MONTH);
-			
+				String strLastUpdateDay = calLastUpdateDay.get(Calendar.YEAR) + "/" + calLastUpdateDay.get(Calendar.MONTH) + "/" + calLastUpdateDay.get(Calendar.DAY_OF_MONTH);
+				
+				if (calLastUpdateDay.compareTo(calDesignatedDay2) > 0) {
+					caliculator.PrintInFile(data[0] + "," + data[1] + "," + numHoliday +  "日" + ",有給取得できません");
+					continue;
+				}
 				int index = 1;
-				daysAfterUpdate.add(Calendar.MONTH, 1);
-				while (daysAfterUpdate.compareTo(calDesignatedDay2) < 0) {
+				calLastUpdateDay.add(Calendar.MONTH, 1);
+				while (calLastUpdateDay.compareTo(calDesignatedDay2) < 0) {
 					index += 1;
-					daysAfterUpdate.add(Calendar.MONTH, 1);
+					calLastUpdateDay.add(Calendar.MONTH, 1);
 				}
 				int[] sequence = new int[index];
 				
 
-				BufferedReader br_th = null;
+				
 				File th = new File("src/took_holiday.csv");
 				br_th  = new BufferedReader(new FileReader(th));
 				String line_th;
@@ -117,21 +122,25 @@ public class Main {
 				line_th = br_th.readLine(); 
 				while ((line_th = br_th.readLine()) != null){
 					data_th = line_th.split(",");
-					Calendar daysAfterUpdate2 = caliculator.ParseStrToCalendar(strDaysAfterUpdate);
+					Calendar calLastUpdateDay2 = caliculator.ParseStrToCalendar(strLastUpdateDay);
 
 					if (data_th[0].equals(data[0])) {
 						Calendar calData_th = caliculator.ParseStrToCalendar(data_th[2]);
 						
+						
+						if (calLastUpdateDay2.compareTo(calData_th) > 0) {
+							continue;
+						}
 						int times = 0;
-						daysAfterUpdate2.add(Calendar.MONTH, 1);
-						while (daysAfterUpdate2.compareTo(calData_th) < 0) {
+						calLastUpdateDay2.add(Calendar.MONTH, 1);
+						while (calLastUpdateDay2.compareTo(calData_th) < 0) {
 							times += 1;
-							daysAfterUpdate2.add(Calendar.MONTH, 1);
+							calLastUpdateDay2.add(Calendar.MONTH, 1);
 						}
 						if (times > index) {
 							System.out.println("指定した日より先の有給取得データがあります");
-							times = index;
-//							指定した日より先にある有給取得データは右端に、最終更新日より1年以上前にある有給取得データは左端に表示される。
+							continue;
+//							指定した日より先にあったり、最終更新日より1年以上前にあるため表に入らない有給取得状況データは無効として扱われる
 						}
 						sequence[times] += 1;	
 					}
@@ -143,7 +152,7 @@ public class Main {
 					caliculator.PrintFile("," + sequence[i]);
 				}
 				caliculator.PrintInFile("," + sequence[index-1]);
-				br_th.close();
+				
 				
 				
 			}
@@ -153,6 +162,7 @@ public class Main {
 			
 			try{
 				br.close();	
+				br_th.close();
 
 			}
 		    catch (Exception e){
