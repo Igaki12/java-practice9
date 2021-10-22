@@ -13,9 +13,7 @@ public Calendar ParseStrToCalendar(String strDate) {
 		Date date = dateFormat.parse(strDate);
 		calendar.setTime(date);
 		return calendar;
-		
-		
-		
+
 	}catch(Exception e) {
 		System.out.println(e.getMessage());
 		return null;
